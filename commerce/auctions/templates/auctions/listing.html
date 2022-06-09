@@ -1,0 +1,63 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    <h2>Listing: {{ listing.title }}</h2>
+    <img src="{{ listings.image }}" height=500px>
+    <p>{{ listings.description }}</p>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <h2>Starting Bid: ${{ listings.starting_bid }}</h2>
+                <p>There are currently {{ bids }} bids on this item.</p>
+                {% if listings.is_active %}
+                {% if username == listings.user %}
+                <form method="post" action="{% url 'close' listings.id %}">
+                    {% csrf_token %}
+                    <input type="submit" value="Close Auction"> <br>
+                    Highest bid till now: {{ winner }}
+                </form>
+                {% else %} 
+                Your bid should be this much or above: ${{ highest }}
+                    <form method="post" action="{% url 'bid' listings.id %}" style="margin-top: 20px">
+                        {% csrf_token %}
+                        <input type="number" name="bid" placeholder="Enter your bid" min={{highest}}>
+                        <input type="submit" value="Bid">
+                    </form>
+                    <form method="post" action="{% url 'listing' listings.id %}" style="margin-top: 20px">
+                        {% csrf_token %}
+                        {% if condition %}
+                            <input type="submit" value="Watchlist" name="Watchlist">
+                        {% else %}
+                            <input type="submit" name="Remove" value="Remove from Watchlist">
+                        {% endif %}
+                    </form>
+                    <form method="post" action="{% url 'comment' listings.id %}" style="margin-top: 20px">
+                        {% csrf_token %}
+                        <textarea name="comment" placeholder="Enter your comment"></textarea>
+                        <input type="submit" value="Comment">
+                    </form>
+                {% endif %}
+                {% else %}
+                {% if username == winner.user %}
+                    You have won the auction! Congratulations! Party Time!
+                {% else %}
+                    Auction Closed!
+                {% endif %}
+                {% endif %}
+            </div>
+            <div class="col-sm-6">
+                <h4>Details:</h4>
+                Listed by: {{ listings.user }} <br>
+                Category: {{ listings.category }} <br>  
+                <h5>Comments</h5>
+                {% for comment in comments %}
+                <div style="border: 1px solid black">
+                    <h4>{{ comment.user }}</h4>
+                    <hr>
+                    <p>{{ comment.comment }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

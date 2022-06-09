@@ -1,0 +1,26 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+<h2>Category: {{ category_name }}</h2>
+
+    {% for listing in category %}
+    {% if listing.is_active %}
+    <div class="container" style="border: solid 1px grey; padding: 20px">
+        <div class="row">
+            <div class="col-sm-6">
+                <img src="{{ listing.image }}" height=300px alt="Image unavailable. Sorry.">
+            </div>
+            <div class="col-sm-6">
+                <strong>{{ listing.title }}</strong><br>
+                {{ listing.description }}<br><hr>
+                Starting Bid: ${{ listing.starting_bid }}<br>
+                Listed by {{ listing.user }}<br><hr>
+                <a href="{% url 'listing' listing.id %}">Bid on this item</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+{% endblock %}
